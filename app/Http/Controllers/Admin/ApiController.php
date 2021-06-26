@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\RoleUser;
 use App\Models\SubCategory;
 use App\Models\Tag;
 use App\Models\User;
@@ -39,6 +40,12 @@ class ApiController extends Controller
         $user->phone = $request->phone;
         $user->password = bcrypt($request->password);
         $user->save();
+        ## Define level
+        $role_user = new RoleUser();
+        $role_user->user_id = $user->id;
+        $role_user->role_id = 1;
+        $role_user->save();
+
         return response()->json([
             'status'=>200,
             'success'=>true,

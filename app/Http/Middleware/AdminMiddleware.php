@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class ifAuth
+class AdminMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,9 +17,11 @@ class ifAuth
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::check() && Auth::user()){
-            return redirect()->route('home')->with('success','Already login!');
+        $user = Auth::user();
+        if($user->hasRole('admin')){
+            return $next($request);
+        } else{
+            return redirect()->route('login')->with('error','No permission!');
         }
-        return $next($request);
     }
 }
