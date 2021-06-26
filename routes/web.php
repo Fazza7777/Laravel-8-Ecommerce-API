@@ -7,7 +7,7 @@ Route::middleware(['ifAuth'])->group(function(){
     Route::post('/admin/login','AuthController@login')->name('login');
 });
 
-
+Route::get('/test','AuthController@test');
 Route::group(['middleware'=>'auth','prefix'=>'admin','namespace'=>'Admin'],function(){
 
     Route::get('/','PageController@home')->name('home');

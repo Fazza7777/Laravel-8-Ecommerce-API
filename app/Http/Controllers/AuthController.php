@@ -4,11 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Http\Requests\LoginRequest;
+use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    public function test()
+    {
+        $user = Auth::user();
+        ## get user from role
+        $role = Role::all();
+       // return $role[0]->users;
+        return $role[1];
+
+        ## get role from user
+        // $user->roles()->attach(2);
+        // $user->roles()->detach(2);
+        // return $user->roles;
+        ## check has role
+        // if ($user->hasRole('super'))
+        //     echo  'yes';
+        // else
+        //     return 'no';
+    }
     public function showLogin()
     {
         return view('login');
