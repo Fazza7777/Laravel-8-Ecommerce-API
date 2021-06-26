@@ -10,7 +10,9 @@
             <li class="nav-item mr-2">
                 <a class="nav-link" href="{{ route('home') }}"><i class="fa fa-home"></i></a>
             </li>
-
+            <li class="nav-item mr-2">
+                <a class="nav-link" href="{{ url('/admin/order') }}"><i class="fas fa-cart-arrow-down"></i></a>
+            </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">

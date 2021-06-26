@@ -23,4 +23,7 @@ Route::group(['namespace'=>'Admin'],function(){
 
 Route::group(['middleware'=>'jwt.auth',"namespace"=>"Admin"],function(){
     Route::get('/me','ApiController@me');
+    Route::post('/order', 'ApiController@setOrder');
+    Route::get('/myOrder', 'ApiController@myOrder');
+    Route::get('/orderItemByOrderId/{id}', 'ApiController@orderItemByorderId');
 });

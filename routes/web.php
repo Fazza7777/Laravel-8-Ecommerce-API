@@ -18,6 +18,9 @@ Route::group(['middleware'=>'auth','prefix'=>'admin','namespace'=>'Admin'],funct
     Route::resource('/tag','TagController');
     Route::resource('/product','ProductController');
 
+    Route::get('/order','OrderController@index')->name('order');
+    Route::get('/orderItem/{id}','OrderItemController@orderItem')->name('order_item');
+
     Route::get('/logout','PageController@logout')->name('logout');
 
 });

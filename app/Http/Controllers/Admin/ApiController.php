@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use \Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\SubCategory;
 use App\Models\Tag;
@@ -81,7 +83,7 @@ class ApiController extends Controller
         return response()->json([
             'status'=>200,
             'success'=>true,
-            'categories'=>$subCategories
+            'subCats'=>$subCategories
          ]);
     }
     public function tags(){
@@ -89,7 +91,7 @@ class ApiController extends Controller
         return response()->json([
             'status'=>200,
             'success'=>true,
-            'categories'=>$tags
+            'tags'=>$tags
          ]);
     }
     public function products(Request $request){
@@ -97,7 +99,7 @@ class ApiController extends Controller
         return response()->json([
             'status'=>200,
             'success'=>true,
-            'categories'=>$products
+            'products'=>$products
          ]);
     }
     public function productByCategory($id){
@@ -105,7 +107,7 @@ class ApiController extends Controller
         return response()->json([
             'status'=>200,
             'success'=>true,
-            'categories'=>$products
+            'products'=>$products
          ]);
     }
     public function productBysubCat($id){
@@ -113,7 +115,7 @@ class ApiController extends Controller
         return response()->json([
             'status'=>200,
             'success'=>true,
-            'categories'=>$products
+            'products'=>$products
          ]);
     }
 
@@ -122,7 +124,69 @@ class ApiController extends Controller
         return response()->json([
             'status'=>200,
             'success'=>true,
-            'categories'=>$products
+            'products'=>$products
+         ]);
+    }
+    ## set order
+    public function  setOrder(Request $request){
+        $orders = $request->orders;
+        $orderId = $this->saveOrder($orders);
+        foreach($orders as $od){
+            $product = Product::find($od['id']);
+            $order_item = new OrderItem();
+            $order_item->order_id = $orderId;
+            $order_item->user_id = auth()->user()->id;
+            $order_item->category_id = $product->category_id;
+            $order_item->subcat_id = $product->subcat_id;
+            $order_item->tag_id = $product->tag_id;
+            $order_item->name = $product->name;
+            $order_item->price = $product->price;
+            $order_item->images = $product->images;
+            $order_item->color = $product->colors;
+            $order_item->size = $product->sizes;
+            $order_item->count = $od['count'];
+            $order_item->total = $product->price * $od['count'];
+            $order_item->save();
+        }
+
+        return response()->json([
+            'status'=>200,
+            'success'=>true,
+            'message'=>'order success'
+         ]);
+    }
+    public function saveOrder($orders){
+        ## calculate total
+          $total = 0 ;
+          foreach($orders as $od){
+            $product = Product::find($od['id']);
+            $total += $product->price * $od['count'];
+          }
+        ## save database
+        $order = new Order();
+        $order->user_id = auth()->user()->id;
+        $order->count = count($orders);
+        $order->status = 0;
+        $order->total = $total;
+        $order->save();
+
+        return $order->id;
+    }
+    ## get order
+    public function myOrder(){
+        $orders = Order::where('user_id',auth()->user()->id)->get()->load('orderItem');
+        return response()->json([
+            'status'=>200,
+            'success'=>true,
+            'orders'=>$orders
+         ]);
+    }
+    public function orderItemByorderId($id){
+        $orders = OrderItem::where('order_id',$id)->get();
+        return response()->json([
+            'status'=>200,
+            'success'=>true,
+            'orders'=>$orders
          ]);
     }
 }
