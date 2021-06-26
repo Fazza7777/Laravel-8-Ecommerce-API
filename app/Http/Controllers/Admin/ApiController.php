@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use \Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\SubCategory;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -67,7 +69,7 @@ class ApiController extends Controller
          ]);
     }
     public function categories(){
-        $categories = Category::all();
+        $categories = Category::with('subCat')->get();
         return response()->json([
             'status'=>200,
             'success'=>true,
@@ -80,6 +82,47 @@ class ApiController extends Controller
             'status'=>200,
             'success'=>true,
             'categories'=>$subCategories
+         ]);
+    }
+    public function tags(){
+        $tags = Tag::latest()->get();
+        return response()->json([
+            'status'=>200,
+            'success'=>true,
+            'categories'=>$tags
+         ]);
+    }
+    public function products(Request $request){
+        $products = Product::with('cat','subcat','tag')->simplePaginate(5);
+        return response()->json([
+            'status'=>200,
+            'success'=>true,
+            'categories'=>$products
+         ]);
+    }
+    public function productByCategory($id){
+        $products = Product::where('category_id',$id)->with('cat','subcat','tag')->simplePaginate(5);
+        return response()->json([
+            'status'=>200,
+            'success'=>true,
+            'categories'=>$products
+         ]);
+    }
+    public function productBysubCat($id){
+        $products = Product::where('subcat_id',$id)->with('cat','subcat','tag')->simplePaginate(5);
+        return response()->json([
+            'status'=>200,
+            'success'=>true,
+            'categories'=>$products
+         ]);
+    }
+
+    public function productByTag($id){
+        $products = Product::where('tag_id',$id)->with('cat','subcat','tag')->simplePaginate(5);
+        return response()->json([
+            'status'=>200,
+            'success'=>true,
+            'categories'=>$products
          ]);
     }
 }

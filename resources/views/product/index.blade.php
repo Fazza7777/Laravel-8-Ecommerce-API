@@ -43,6 +43,11 @@
                     </tbody>
 
                 </table>
+                <div class="mt-3">
+                   <div class="">
+                    {{ $products->links() }}
+                   </div>
+                </div>
             </div>
         </div>
     </div>
