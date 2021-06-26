@@ -1,0 +1,17 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&family=Padauk:wght@400;700&display=swap');
+$font-family-sans-serif:'Open Sans''Padauk', sans-serif;
+$primary:#567bac;
+$danger:#ee3160;
+$success:#45e99c;
+$info:pink;
+$warning:#edf03d;
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+//fontawesome
+@import '~@fortawesome/fontawesome-free/css/all.min.css';
+
+//toastr
+@import '~toastr/toastr';
+
