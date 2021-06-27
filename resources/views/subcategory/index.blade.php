@@ -28,7 +28,7 @@
                                    <td>{{ $category->name }}</td>
                                     <td>
 
-                                        <a href="{{ route('sub.edit', $cat->id) }}" class="btn btn-sm btn-warning mr-3"><i
+                                        <a href="{{ route('sub.edit', $cat->id) }}" class="btn btn-sm btn-success mr-3"><i
                                                 class="fa fa-edit"></i> Edit</a>
                                         <x-button :action="route('sub.destroy',$cat->id)" :slug="$cat->id" />
                                     </td>

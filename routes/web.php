@@ -20,6 +20,7 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin', 'namespace' => 'Admi
 
     Route::get('/order', 'OrderController@index')->name('order');
     Route::get('/orderItem/{id}', 'OrderItemController@orderItem')->name('order_item');
+    Route::patch('/changeOrderStatus/{id}', 'OrderController@changeOrderStatus')->name('change-status');
 
     Route::get('/logout', 'PageController@logout')->name('logout');
 });

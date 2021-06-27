@@ -30,7 +30,7 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('category.edit', $cat->id) }}"
-                                        class="btn btn-sm btn-warning mr-3"><i class="fa fa-edit"></i> Edit</a>
+                                        class="btn btn-sm btn-success mr-3"><i class="fa fa-edit"></i> Edit</a>
                                     <x-button :action="route('category.destroy',$cat->id)" :slug="$cat->slug" />
                                 </td>
                             </tr>

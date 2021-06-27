@@ -4,7 +4,7 @@
     <div class="container my-5">
         <div class="row">
             <div class=" col-12">
-              <div class="card">
+              <div class="card border-0">
                   <div class="card-header text-center">
                     <a href="{{url()->previous() }}" style="text-decoration: none" class="float-left btn btn-primary"><i
                         class="fas fa-chevron-left mr-2"></i> Back</a>
@@ -17,8 +17,8 @@
                             <th>Name</th>
                             <th>Count</th>
                             <th> Price</th>
-                            <th>Status</th>
                             <th>Action</th>
+                            <th>Status</th>
                         </thead>
                         <tbody>
 
@@ -28,12 +28,18 @@
                                     <td>{{ $order->user->name }}</td>
                                     <td>{{ $order->count }}</td>
                                     <td>{{ $order->total }} MMK</td>
-                                    <td>{{ $order->status }}</td>
                                     <td>
                                         <a href="{{ route('order_item', $order->id) }}"
                                             class="btn btn-sm btn-info mr-3"><i class="fa fa-eye"></i></a>
-                                        {{-- <x-button :action="route('order.destroy',$order->id)" :slug="$order->slug" /> --}}
                                     </td>
+                                    <td>
+                                        <form action="{{ route('change-status',$order->id) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button class=" btn {{ !$order->status ? 'btn-danger' : ' btn-success' }} btn-sm">Toggle</button>
+                                        </form>
+                                    </td>
+
                                 </tr>
                             @endforeach
                         </tbody>

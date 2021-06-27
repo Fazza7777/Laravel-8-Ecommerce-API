@@ -173,7 +173,7 @@ class ApiController extends Controller
         $order = new Order();
         $order->user_id = auth()->user()->id;
         $order->count = count($orders);
-        $order->status = 0;
+        $order->status = false;
         $order->total = $total;
         $order->save();
 

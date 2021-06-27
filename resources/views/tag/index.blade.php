@@ -24,7 +24,7 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('tag.edit', $tag->id) }}"
-                                        class="btn btn-sm btn-warning mr-3"><i class="fa fa-edit"></i> Edit</a>
+                                        class="btn btn-sm btn-success mr-3"><i class="fa fa-edit"></i> Edit</a>
                                     <x-button :action="route('tag.destroy',$tag->id)" :slug="$tag->slug" />
                                 </td>
                             </tr>

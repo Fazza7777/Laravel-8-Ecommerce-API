@@ -35,7 +35,7 @@
                                 <td>{{ $product->description }}</td>
                                 <td class="text-nowrap">
                                     <a href="{{ route('product.edit', $product->id) }}"
-                                        class="btn btn-sm btn-warning mr-3"><i class="fa fa-edit"></i> Edit</a>
+                                        class="btn btn-sm btn-success mr-3"><i class="fa fa-edit"></i> Edit</a>
                                     <x-button :action="route('product.destroy',$product->id)" :slug="$product->slug" />
                                 </td>
                             </tr>
