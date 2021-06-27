@@ -37,23 +37,21 @@ class AuthController extends Controller
     }
     public function login(LoginRequest $request)
     {
+      //  dd( $request->get('rememberMe'));
+
         $phone = $request->phone;
         $password = $request->password;
         $user = User::where('phone', $phone)->first();
         if ($user) {
             if (Hash::check($password, $user->password)) {
                 Auth::login($user);
-                return redirect()->route('home')->with('login', 'Welcome ' . $user->name);
+                return redirect()->route('home')->with(['login'=>'Welcome ' . $user->name,'rememberMe'=>$request->get('rememberMe') ?? 'off']);
             } else {
                 return redirect()->back()->withErrors(['password' => 'စကား၀ှက်မှားနေပါသည်။']);
             }
         } else {
             return redirect()->back()->withErrors(['phone' => 'ယခု နံပါတ်ဖြင့်အကောင့်မရှိပါ']);
         }
-        if ($request->rememberMe == "on") {
-            return 'on';
-        } else {
-            return 'off';
-        }
+
     }
 }

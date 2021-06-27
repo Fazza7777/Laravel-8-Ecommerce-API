@@ -11,11 +11,11 @@
                     <div class="card-body p-5">
                         <form method="POST">
                             @csrf
-                           <x-input name='phone' type='number' value="09777758089" />
+                           <x-input name='phone' type='number'  />
                            <x-input name='password' type='password'/>
 
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" name="rememberMe" id="rememberMe">
+                                <input type="checkbox" class="form-check-input" name="rememberMe"  id="rememberMe">
                                 <label class="form-check-label" for="rememberMe">Remember me</label>
                             </div>
                             <button class="btn btn-primary mt-3">Login</button>
@@ -26,8 +26,19 @@
         </div>
     </div>
 @endsection
-@section('foot')
-    <script>
+@push('script')
+<script>
+    let phone = document.querySelector('#phone');
+    let rememberMe = document.querySelector('#rememberMe');
+    let rememberChk = localStorage.getItem('rememberMe');
+    console.log(typeof rememberChk); // localstorage get data is ever string
+    if(rememberChk === 'true'){
+      phone.value = localStorage.getItem('phone');
+     // rememberMe.setAttribute('checked',rememberChk);
+        rememberMe.checked = rememberChk === 'true';
 
-    </script>
-@stop
+    }
+</script>
+@endpush
+
+
