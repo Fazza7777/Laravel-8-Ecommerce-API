@@ -19,6 +19,9 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
         $order->status = !$order->status;
         $order->update();
-        return redirect()->back();
+        if($order->status)
+        return redirect()->back()->with('success','Order check success!');
+        else 
+        return redirect()->back()->with('info','Order not check!');
     }
 }

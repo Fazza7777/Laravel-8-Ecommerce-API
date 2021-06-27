@@ -10,3 +10,8 @@
         toastr.error("{{ session()->get('error') }}")
 </script>
 @endif
+@if(session()->has('info'))
+<script>
+        toastr.info("{{ session()->get('info') }}")
+</script>
+@endif
