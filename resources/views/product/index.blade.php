@@ -26,7 +26,7 @@
                                 <td>{{ $product->name }}</td>
                                 <td>
                                     @foreach (explode(',',$product->images) as $img)
-                                      <img src="{{ asset('product/'.$img) }}" alt="" width="50" height="50" class="rounded">
+                                      <img onclick="showLightBox('{{ asset("product/".$img) }}','{{ $product->name }}')" src="{{ asset('product/'.$img) }}" alt="" width="50" height="50" class="rounded">
                                     @endforeach
                                 </td>
                                 <td>{{ $product->price }}</td>
@@ -48,7 +48,37 @@
                     {{ $products->links() }}
                    </div>
                 </div>
+
             </div>
         </div>
     </div>
+          <!--    ImageLight Box or    Modal Box Start -->
+          <div class="modal" tabindex="-1" id='lightBox' role="dialog">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id='title'></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                <p class="text-center"><img src="" id='image'  alt="" width="270" height="300"></p>
+                </div>
+
+            </div>
+            </div>
+        </div>
+      <!--    ImageLight Box or    Modal Box end -->
 @endsection
+
+@push('script')
+<script>
+    let showLightBox = (img,title)=>{
+     document.querySelector('#image').src = img;
+     document.querySelector('#title').innerHTML = title;
+     $('#lightBox').modal('show')
+    }
+</script>
+
+@endpush
