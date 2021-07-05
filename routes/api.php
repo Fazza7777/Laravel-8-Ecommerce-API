@@ -11,12 +11,14 @@ Route::group(['namespace'=>'Admin'],function(){
     Route::post('/register','ApiController@register');
 
     Route::get('/categories','ApiController@categories');
+    Route::get('/subcats','ApiController@subcats');
     Route::get('/subcat/{id}','ApiController@subCategories');
     Route::get('/tags','ApiController@tags');
     Route::get('/products','ApiController@products');
     Route::get('/productByCat/{id}','ApiController@productByCategory');
     Route::get('/productBySubCat/{id}','ApiController@productBysubCat');
     Route::get('/productByTag/{id}','ApiController@productByTag');
+    Route::get('/productByAllTag/{id}','ApiController@productByAllTag');
 });
 
 ## For If Auth

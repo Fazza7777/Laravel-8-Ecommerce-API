@@ -21,13 +21,20 @@ class ApiController extends Controller
 {
     public function register(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'phone' => 'required|digits_between:7,11',
+            'phone' => 'required|unique:users|digits_between:7,11',
             'password' => 'required',
             'password_confrim' => 'required|same:password'
+        ], [
+            'required' => ':attribute ထည့်ရန်လိုအပ်ပါသည်',
+            'digits_between' => ':attribute သည်အနည်းဆုံး 9လုံး အများဆုံး 11လုံး ထည့်ရန်လိုအပ်ပါသည်',
+            'unique' => ' :attribute သည်အသုံးပြုပီးဖြစ်ပါသည်',
+            'same' => ':attribute များတူညီရန်လိုအပ်ပါသည်။'
         ]);
+
         if ($validator->fails()) {
             return response()->json([
                 'status' => 500,
@@ -55,13 +62,16 @@ class ApiController extends Controller
     }
     public function login(Request $request)
     {
+
         $cre = $request->only('email', 'password');
         $token = JWTAuth::attempt($cre);
+        $user = User::where('email',$request->email)->first();
         if ($token) {
             return response()->json([
                 'status' => 200,
                 'success' => true,
-                'token' => $token
+                'token' => $token,
+                'user'=> $user
             ]);
         } else {
             return response()->json([
@@ -82,47 +92,49 @@ class ApiController extends Controller
     }
     public function categories()
     {
-        $categories = Category::with('subCat')->get();
-        $count = Category::count();
+        $categories = Category::withcount('product')->latest()->take(30)->get();
         return response()->json([
             'status' => 200,
             'success' => true,
-            'categories' => $categories,
-            'count' => $count
+            'data' => $categories,
+        ]);
+    }
+    public function subcats()
+    {
+        $subcats = SubCategory::withcount('product')->take(30)->get();
+
+        return response()->json([
+            'status' => 200,
+            'success' => true,
+            'data' => $subcats,
         ]);
     }
     public function subCategories($id)
     {
         $subCategories = SubCategory::where('category_id', $id)->get();
-        $count = SubCategory::count();
         return response()->json([
             'status' => 200,
             'success' => true,
-            'subCats' => $subCategories,
-            'count' => $count
+            'data' => $subCategories,
         ]);
     }
     public function tags()
     {
         $tags = Tag::latest()->get();
-        $count = Tag::count();
-        return response()->json([
-            'status' => 200,
-            'success' => true,
-            'tags' => $tags,
-            'count' => $count
-        ]);
-    }
-    public function products(Request $request)
-    {
-        $products = Product::with('cat', 'subcat', 'tag')->simplePaginate(5);
-        $count = Product::count();
 
         return response()->json([
             'status' => 200,
             'success' => true,
-            'products' => $products,
-            'count' => $count
+            'data' => $tags,
+        ]);
+    }
+    public function products(Request $request)
+    {
+        $products = Product::with('cat', 'subcat', 'tag')->simplePaginate(50);
+        return response()->json([
+            'status' => 200,
+            'success' => true,
+            'data' => $products,
 
         ]);
     }
@@ -132,26 +144,35 @@ class ApiController extends Controller
         return response()->json([
             'status' => 200,
             'success' => true,
-            'products' => $products
+            'data' => $products
         ]);
     }
     public function productBysubCat($id)
     {
-        $products = Product::where('subcat_id', $id)->with('cat', 'subcat', 'tag')->simplePaginate(5);
+        $products = Product::where('subcat_id', $id)->simplePaginate(50);
         return response()->json([
             'status' => 200,
             'success' => true,
-            'products' => $products
+            'data' => $products
         ]);
     }
 
     public function productByTag($id)
     {
-        $products = Product::where('tag_id', $id)->with('cat', 'subcat', 'tag')->simplePaginate(5);
+        $products = Product::where('tag_id', $id)->latest()->take(3)->get();
         return response()->json([
             'status' => 200,
             'success' => true,
-            'products' => $products
+            'data' => $products
+        ]);
+    }
+    public function productByAllTag($id)
+    {
+        $products = Product::where('tag_id', $id)->latest()->paginate(50);
+        return response()->json([
+            'status' => 200,
+            'success' => true,
+            'data' => $products
         ]);
     }
     ## set order
@@ -208,7 +229,7 @@ class ApiController extends Controller
         return response()->json([
             'status' => 200,
             'success' => true,
-            'orders' => $orders
+            'data' => $orders
         ]);
     }
     public function orderItemByorderId($id)

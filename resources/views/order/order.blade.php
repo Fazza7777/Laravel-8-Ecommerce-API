@@ -19,6 +19,7 @@
                             <th> Price</th>
                             <th>Action</th>
                             <th>Status</th>
+                            <th>-</th>
                         </thead>
                         <tbody>
 
@@ -39,7 +40,11 @@
                                             <button class=" btn {{ !$order->status ? 'btn-danger' : ' btn-success' }} btn-sm">Toggle</button>
                                         </form>
                                     </td>
-
+                                   <td class="text-center">
+                                       <a onclick="return confirm('Arue you sure delete?')" href="{{ route('order.delete',$order->id) }}" class="btn btn-sm text-white" style="background: #771FE9">
+                                        <i class="fas fa-trash-alt mr-1"></i> Delete
+                                       </a>
+                                   </td>
                                 </tr>
                             @endforeach
                         </tbody>
