@@ -32,4 +32,6 @@ Route::group(['middleware'=>'jwt.auth',"namespace"=>"Admin"],function(){
 
     Route::post('/save-product', 'ApiController@saveProduct');
     Route::post('/unsave-product', 'ApiController@unsaveProduct');
+
+    Route::get('/getSaveProduct', 'ApiController@getSaveProduct');
 });

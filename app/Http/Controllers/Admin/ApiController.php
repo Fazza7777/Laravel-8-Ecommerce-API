@@ -278,6 +278,7 @@ class ApiController extends Controller
 
         ]);
     }
+    ## unsave product
     public function unsaveProduct(Request $request)
     {
 
@@ -293,5 +294,23 @@ class ApiController extends Controller
             'data' => $product,
 
         ]);
+    }
+    ## get save product
+    public function getSaveProduct(){
+        $user_id = auth()->user()->id;
+        // $product = SaveProduct::with('product.cat')->where('user_id', $user_id)->get();
+        $products = SaveProduct::where('user_id', $user_id)->get();
+        $product = [];
+        foreach($products as $p){
+          $data = Product::with('cat','tag','subcat')->where('id',$p->product_id)->first();
+          $data['save'] = true;
+          array_push($product,$data);
+        }
+       return response()->json([
+        'status' => 200,
+        'success' => true,
+        'data' => $product,
+
+    ]);
     }
 }
