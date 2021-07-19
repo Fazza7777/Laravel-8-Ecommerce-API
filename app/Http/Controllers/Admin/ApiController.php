@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\RoleUser;
+use App\Models\SaveProduct;
 use App\Models\SubCategory;
 use App\Models\Tag;
 use App\Models\User;
@@ -65,13 +66,13 @@ class ApiController extends Controller
 
         $cre = $request->only('email', 'password');
         $token = JWTAuth::attempt($cre);
-        $user = User::where('email',$request->email)->first();
+        $user = User::where('email', $request->email)->first();
         if ($token) {
             return response()->json([
                 'status' => 200,
                 'success' => true,
                 'token' => $token,
-                'user'=> $user
+                'user' => $user
             ]);
         } else {
             return response()->json([
@@ -92,7 +93,7 @@ class ApiController extends Controller
     }
     public function categories()
     {
-        $categories = Category::withcount('product')->latest()->take(30)->get();
+        $categories = Category::withcount('product')->latest()->get();
         return response()->json([
             'status' => 200,
             'success' => true,
@@ -101,7 +102,7 @@ class ApiController extends Controller
     }
     public function subcats()
     {
-        $subcats = SubCategory::withcount('product')->take(30)->get();
+        $subcats = SubCategory::withcount('product')->take(15)->get();
 
         return response()->json([
             'status' => 200,
@@ -120,7 +121,7 @@ class ApiController extends Controller
     }
     public function tags()
     {
-        $tags = Tag::latest()->get();
+        $tags = Tag::get();
 
         return response()->json([
             'status' => 200,
@@ -130,11 +131,29 @@ class ApiController extends Controller
     }
     public function products(Request $request)
     {
-        $products = Product::with('cat', 'subcat', 'tag')->simplePaginate(50);
+        $products = Product::with('cat', 'subcat', 'tag')->latest()->simplePaginate(12);
         return response()->json([
             'status' => 200,
             'success' => true,
             'data' => $products,
+
+        ]);
+    }
+    public function productById($id)
+    {
+        $chkSave = SaveProduct::where('product_id', $id)->first();
+        if ($chkSave) {
+            $save = true;
+        } else {
+            $save = false;
+        }
+
+        $product = Product::with('cat', 'subcat', 'tag')->where('id', $id)->first();
+        $product['save'] = $save;
+        return response()->json([
+            'status' => 200,
+            'success' => true,
+            'data' => $product,
 
         ]);
     }
@@ -159,7 +178,7 @@ class ApiController extends Controller
 
     public function productByTag($id)
     {
-        $products = Product::where('tag_id', $id)->latest()->take(3)->get();
+        $products = Product::where('tag_id', $id)->latest()->take(6)->get();
         return response()->json([
             'status' => 200,
             'success' => true,
@@ -239,6 +258,40 @@ class ApiController extends Controller
             'status' => 200,
             'success' => true,
             'orders' => $orders
+        ]);
+    }
+    ## save product
+    public function saveProduct(Request $request)
+    {
+        $user_id = auth()->user()->id;
+        $product_id = $request->product_id;
+        $save_product = new SaveProduct();
+        $save_product->user_id = $user_id;
+        $save_product->product_id = $product_id;
+        $save_product->save();
+        $product = Product::with('cat', 'subcat', 'tag')->where('id', $product_id)->first();
+        $product['save'] = true;
+        return response()->json([
+            'status' => 200,
+            'success' => true,
+            'data' => $product,
+
+        ]);
+    }
+    public function unsaveProduct(Request $request)
+    {
+
+        $product_id = $request->product_id;
+        $product = Product::with('cat', 'subcat', 'tag')->where('id', $product_id)->first();
+        $product['save'] = false;
+
+        SaveProduct::where('product_id', $product_id)->delete();
+
+        return response()->json([
+            'status' => 200,
+            'success' => true,
+            'data' => $product,
+
         ]);
     }
 }

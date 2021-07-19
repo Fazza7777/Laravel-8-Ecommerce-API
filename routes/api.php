@@ -15,6 +15,7 @@ Route::group(['namespace'=>'Admin'],function(){
     Route::get('/subcat/{id}','ApiController@subCategories');
     Route::get('/tags','ApiController@tags');
     Route::get('/products','ApiController@products');
+    Route::get('/product/{id}','ApiController@productById');
     Route::get('/productByCat/{id}','ApiController@productByCategory');
     Route::get('/productBySubCat/{id}','ApiController@productBysubCat');
     Route::get('/productByTag/{id}','ApiController@productByTag');
@@ -28,4 +29,7 @@ Route::group(['middleware'=>'jwt.auth',"namespace"=>"Admin"],function(){
     Route::post('/order', 'ApiController@setOrder');
     Route::get('/myOrder', 'ApiController@myOrder');
     Route::get('/orderItemByOrderId/{id}', 'ApiController@orderItemByorderId');
+
+    Route::post('/save-product', 'ApiController@saveProduct');
+    Route::post('/unsave-product', 'ApiController@unsaveProduct');
 });
