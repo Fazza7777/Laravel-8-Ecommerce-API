@@ -15,6 +15,7 @@ use App\Models\SubCategory;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -27,6 +28,7 @@ class ApiController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'phone' => 'required|unique:users|digits_between:7,11',
+            'address' => 'required',
             'password' => 'required',
             'password_confrim' => 'required|same:password'
         ], [
@@ -47,6 +49,7 @@ class ApiController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->phone = $request->phone;
+        $user->address = $request->address;
         $user->password = bcrypt($request->password);
         $user->save();
         ## Define level
@@ -292,25 +295,100 @@ class ApiController extends Controller
             'status' => 200,
             'success' => true,
             'data' => $product,
-
         ]);
     }
     ## get save product
-    public function getSaveProduct(){
+    public function getSaveProduct()
+    {
         $user_id = auth()->user()->id;
         // $product = SaveProduct::with('product.cat')->where('user_id', $user_id)->get();
         $products = SaveProduct::where('user_id', $user_id)->get();
         $product = [];
-        foreach($products as $p){
-          $data = Product::with('cat','tag','subcat')->where('id',$p->product_id)->first();
-          $data['save'] = true;
-          array_push($product,$data);
+        foreach ($products as $p) {
+            $data = Product::with('cat', 'tag', 'subcat')->where('id', $p->product_id)->first();
+            $data['save'] = true;
+            array_push($product, $data);
         }
-       return response()->json([
-        'status' => 200,
-        'success' => true,
-        'data' => $product,
+        return response()->json([
+            'status' => 200,
+            'success' => true,
+            'data' => $product,
 
-    ]);
+        ]);
+    }
+    ## update profile
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,' . $user->id . ',id',
+            'phone' => 'required|digits_between:7,11|unique:users,phone,' . $user->id . ',id',
+            'address' => 'required',
+        ], [
+            'required' => ':attribute ထည့်ရန်လိုအပ်ပါသည်',
+            'digits_between' => ':attribute သည်အနည်းဆုံး 9လုံး အများဆုံး 11လုံး ထည့်ရန်လိုအပ်ပါသည်',
+            'unique' => ' :attribute သည်အသုံးပြုပီးဖြစ်ပါသည်',
+            'same' => ':attribute များတူညီရန်လိုအပ်ပါသည်။'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 500,
+                'success' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+        $user = User::where('id', $user->id)->first();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->address = $request->address;
+
+        $user->update();
+        return response()->json([
+            'status' => 200,
+            'success' => true,
+            'user' => $user
+        ]);
+    }
+    ## change password
+    public function changePassword(Request $request)
+    {
+        $user = auth()->user();
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required',
+            'new_password' => 'required|min:6',
+            'confirm_password' => 'required|same:new_password',
+
+        ], [
+            'required' => ':attribute ထည့်ရန်လိုအပ်ပါသည်',
+            'same' => ':attribute သည် New Password နှင့် တူညီရန်လိုအပ်ပါသည်',
+            'min' => ':attribute သည် အနည်းဆုံး ၆ လုံးဖြစ်ရပါမည်',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 500,
+                'success' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+        $user = User::where('id', $user->id)->first();
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'status' => 500,
+                'success' => false,
+                'errors' => ["current_password" => [0 => "လက်ရှိစကားဝှက်မှားနေပါသည်။"]]
+            ]);
+        } else {
+            $user->password = Hash::make($request->new_password);
+            $user->update();
+            return response()->json([
+                'status' => 200,
+                'success' => true,
+                'user' => $user
+            ]);
+        }
     }
 }
